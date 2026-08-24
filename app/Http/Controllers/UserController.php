@@ -9,20 +9,35 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
+use Spatie\Permission\Models\Role;
 
 class UserController extends Controller
 {
+    /*
+    |--------------------------------------------------------------------------
+    | INDEX
+    |--------------------------------------------------------------------------
+    */
+
     public function index()
     {
         $users = User::with([
             'company',
             'branch',
+            'roles',
         ])
             ->latest()
             ->paginate(15);
 
         return view('admin.users.index', compact('users'));
     }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | CREATE
+    |--------------------------------------------------------------------------
+    */
 
     public function create()
     {
@@ -34,11 +49,23 @@ class UserController extends Controller
             ->orderBy('name')
             ->get();
 
+        $roles = Role::where('guard_name', 'web')
+            ->orderBy('name')
+            ->get();
+
         return view('admin.users.create', compact(
             'companies',
-            'branches'
+            'branches',
+            'roles'
         ));
     }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | STORE
+    |--------------------------------------------------------------------------
+    */
 
     public function store(Request $request)
     {
@@ -74,7 +101,13 @@ class UserController extends Controller
                 'exists:branches,id',
             ],
 
+            'role' => [
+                'required',
+                'exists:roles,name',
+            ],
+
         ]);
+
 
         /*
         |--------------------------------------------------------------------------
@@ -103,26 +136,75 @@ class UserController extends Controller
         }
 
 
+        /*
+        |--------------------------------------------------------------------------
+        | Password
+        |--------------------------------------------------------------------------
+        */
+
         $validated['password'] = Hash::make(
             $validated['password']
         );
 
-        User::create($validated);
+
+        /*
+        |--------------------------------------------------------------------------
+        | Store Role Separately
+        |--------------------------------------------------------------------------
+        */
+
+        $role = $validated['role'];
+
+        unset($validated['role']);
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Create User
+        |--------------------------------------------------------------------------
+        */
+
+        $user = User::create($validated);
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Assign Role
+        |--------------------------------------------------------------------------
+        */
+
+        $user->assignRole($role);
+
 
         return redirect()
             ->route('admin.users.index')
             ->with('success', 'User created successfully.');
     }
 
+
+    /*
+    |--------------------------------------------------------------------------
+    | SHOW
+    |--------------------------------------------------------------------------
+    */
+
     public function show(User $user)
     {
         $user->load([
             'company',
             'branch',
+            'roles',
         ]);
 
         return view('admin.users.show', compact('user'));
     }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | EDIT
+    |--------------------------------------------------------------------------
+    */
 
     public function edit(User $user)
     {
@@ -134,12 +216,34 @@ class UserController extends Controller
             ->orderBy('name')
             ->get();
 
+        $roles = Role::where('guard_name', 'web')
+            ->orderBy('name')
+            ->get();
+
+        /*
+        |--------------------------------------------------------------------------
+        | Current Role
+        |--------------------------------------------------------------------------
+        */
+
+        $currentRole = $user->roles->first()?->name;
+
+
         return view('admin.users.edit', compact(
             'user',
             'companies',
-            'branches'
+            'branches',
+            'roles',
+            'currentRole'
         ));
     }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | UPDATE
+    |--------------------------------------------------------------------------
+    */
 
     public function update(Request $request, User $user)
     {
@@ -174,6 +278,11 @@ class UserController extends Controller
             'branch_id' => [
                 'nullable',
                 'exists:branches,id',
+            ],
+
+            'role' => [
+                'required',
+                'exists:roles,name',
             ],
 
         ]);
@@ -225,12 +334,49 @@ class UserController extends Controller
         }
 
 
+        /*
+        |--------------------------------------------------------------------------
+        | Store Role Separately
+        |--------------------------------------------------------------------------
+        */
+
+        $role = $validated['role'];
+
+        unset($validated['role']);
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Update User
+        |--------------------------------------------------------------------------
+        */
+
         $user->update($validated);
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Sync Role
+        |--------------------------------------------------------------------------
+        |
+        | Old role will be removed and selected role will be assigned.
+        |
+        */
+
+        $user->syncRoles([$role]);
+
 
         return redirect()
             ->route('admin.users.index')
             ->with('success', 'User updated successfully.');
     }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | DESTROY
+    |--------------------------------------------------------------------------
+    */
 
     public function destroy(User $user)
     {
