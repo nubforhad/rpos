@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CompanyController; 
 use App\Http\Controllers\BranchController; 
+use App\Http\Controllers\Admin\UserController;
 
 
 Route::get('/', function () {
@@ -15,5 +16,6 @@ Route::get('/', function () {
     Route::prefix('admin')->name('admin.')->group(function () {
         Route::resource('companies', CompanyController::class);
         Route::resource('branches', BranchController::class);
+        Route::resource('users', UserController::class);
 
     });

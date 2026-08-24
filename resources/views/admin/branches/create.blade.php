@@ -362,26 +362,17 @@
                                            focus:ring-indigo-500"
                                 >
 
-                                <span class="text-sm
-                                             font-medium
-                                             text-gray-700">
-
+                                <span class="text-sm  font-medium  text-gray-700">
                                     Active Branch
-
                                 </span>
-
                             </label>
-
                         </div>
-
                         @error('status')
 
                             <p class="mt-1 text-sm text-red-600">
                                 {{ $message }}
                             </p>
-
                         @enderror
-
                     </div>
 
 
@@ -413,13 +404,9 @@
                             </p>
 
                         @enderror
-
                     </div>
-
                 </div>
-
             </div>
-
 
             {{-- Footer --}}
             <div class="flex flex-col
@@ -444,8 +431,7 @@
                     Cancel
                 </a>
 
-                <button
-                    type="submit"
+                <button   type="submit"
                     class="px-5 py-2.5
                            bg-indigo-600
                            text-white
@@ -455,13 +441,9 @@
                 >
                     Create Branch
                 </button>
-
             </div>
-
         </div>
-
     </form>
-
 </div>
 
 @endsection
