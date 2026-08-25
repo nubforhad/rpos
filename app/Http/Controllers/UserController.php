@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\Branch;
@@ -380,24 +380,10 @@ class UserController extends Controller
 
     public function destroy(User $user)
     {
-        /*
-        |--------------------------------------------------------------------------
-        | Prevent deleting currently logged-in user
-        |--------------------------------------------------------------------------
-        */
-
         if (auth()->id() === $user->id) {
-
-            return back()
-                ->with('error', 'You cannot delete your own account.');
-
+            return back()->with('error', 'You cannot delete your own account.');
         }
-
-
         $user->delete();
-
-        return redirect()
-            ->route('admin.users.index')
-            ->with('success', 'User deleted successfully.');
+        return redirect()->route('admin.users.index')->with('success', 'User deleted successfully.');
     }
 }

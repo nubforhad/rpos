@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CompanyController; 
 use App\Http\Controllers\BranchController; 
-use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\UserController;
 
 
 Route::get('/', function () {
