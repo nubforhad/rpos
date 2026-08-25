@@ -476,6 +476,49 @@
 
                     </div>
 
+                    {{-- Role --}}
+                    <div>
+
+                        <label for="branch_id"
+                               class="block text-sm font-medium
+                                      text-gray-700 mb-2">
+
+                            Role
+
+                        </label>
+
+                        <select name="role_id"
+                            id="role_id"
+                            required
+                            class="w-full rounded-xl border-gray-300
+                                focus:border-indigo-500
+                                focus:ring-indigo-500">
+
+                        <option value="">
+                            Select Role
+                        </option>
+
+                        @foreach($roles as $role)
+
+                            <option value="{{ $role->id }}"
+                                {{ old('role_id') == $role->id ? 'selected' : '' }}>
+
+                                {{ $role->name }}
+
+                            </option>
+
+                        @endforeach
+
+                    </select>
+
+                        @error('branch_id')
+                            <p class="mt-1.5 text-xs text-red-600">
+                                {{ $message }}
+                            </p>
+                        @enderror
+
+                    </div>
+
                 </div>
 
 

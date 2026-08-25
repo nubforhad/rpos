@@ -173,12 +173,8 @@
 
                     {{-- Categories --}}
 
-                    <a
-                        href="#"
-                        class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-300 hover:bg-slate-800 hover:text-white transition"
-                    >
+                    <a  href="{{ route('admin.product-categories.index')}}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-300 hover:bg-slate-800 hover:text-white transition">
                         <span class="w-5 text-center"> 🗂️ </span>
-
                         <span> Categories </span>
                     </a>
 

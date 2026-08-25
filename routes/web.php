@@ -5,6 +5,7 @@ use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\BranchController; 
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\ProductCategoryController;
 
 
 Route::get('/', function () {
@@ -19,5 +20,6 @@ Route::get('/', function () {
         Route::resource('branches', BranchController::class);
         Route::resource('users', UserController::class);
         Route::resource('roles', RoleController::class);
+        Route::resource('product-categories',  ProductCategoryController::class);
 
     });

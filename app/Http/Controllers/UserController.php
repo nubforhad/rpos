@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use App\Models\Branch;
 use App\Models\Company;
 use App\Models\User;
@@ -24,12 +23,15 @@ class UserController extends Controller
         $users = User::with([
             'company',
             'branch',
-            'roles',
+            'role',
         ])
             ->latest()
             ->paginate(15);
 
-        return view('admin.users.index', compact('users'));
+        return view(
+            'admin.users.index',
+            compact('users')
+        );
     }
 
 
@@ -53,11 +55,14 @@ class UserController extends Controller
             ->orderBy('name')
             ->get();
 
-        return view('admin.users.create', compact(
-            'companies',
-            'branches',
-            'roles'
-        ));
+        return view(
+            'admin.users.create',
+            compact(
+                'companies',
+                'branches',
+                'roles'
+            )
+        );
     }
 
 
@@ -101,9 +106,9 @@ class UserController extends Controller
                 'exists:branches,id',
             ],
 
-            'role' => [
+            'role_id' => [
                 'required',
-                'exists:roles,name',
+                'exists:roles,id',
             ],
 
         ]);
@@ -120,8 +125,14 @@ class UserController extends Controller
             !empty($validated['company_id'])
         ) {
 
-            $branchBelongsToCompany = Branch::where('id', $validated['branch_id'])
-                ->where('company_id', $validated['company_id'])
+            $branchBelongsToCompany = Branch::where(
+                'id',
+                $validated['branch_id']
+            )
+                ->where(
+                    'company_id',
+                    $validated['company_id']
+                )
                 ->exists();
 
             if (!$branchBelongsToCompany) {
@@ -149,36 +160,19 @@ class UserController extends Controller
 
         /*
         |--------------------------------------------------------------------------
-        | Store Role Separately
-        |--------------------------------------------------------------------------
-        */
-
-        $role = $validated['role'];
-
-        unset($validated['role']);
-
-
-        /*
-        |--------------------------------------------------------------------------
         | Create User
         |--------------------------------------------------------------------------
         */
 
-        $user = User::create($validated);
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | Assign Role
-        |--------------------------------------------------------------------------
-        */
-
-        $user->assignRole($role);
+        User::create($validated);
 
 
         return redirect()
             ->route('admin.users.index')
-            ->with('success', 'User created successfully.');
+            ->with(
+                'success',
+                'User created successfully.'
+            );
     }
 
 
@@ -193,10 +187,13 @@ class UserController extends Controller
         $user->load([
             'company',
             'branch',
-            'roles',
+            'role',
         ]);
 
-        return view('admin.users.show', compact('user'));
+        return view(
+            'admin.users.show',
+            compact('user')
+        );
     }
 
 
@@ -220,22 +217,15 @@ class UserController extends Controller
             ->orderBy('name')
             ->get();
 
-        /*
-        |--------------------------------------------------------------------------
-        | Current Role
-        |--------------------------------------------------------------------------
-        */
-
-        $currentRole = $user->roles->first()?->name;
-
-
-        return view('admin.users.edit', compact(
-            'user',
-            'companies',
-            'branches',
-            'roles',
-            'currentRole'
-        ));
+        return view(
+            'admin.users.edit',
+            compact(
+                'user',
+                'companies',
+                'branches',
+                'roles'
+            )
+        );
     }
 
 
@@ -245,8 +235,10 @@ class UserController extends Controller
     |--------------------------------------------------------------------------
     */
 
-    public function update(Request $request, User $user)
-    {
+    public function update(
+        Request $request,
+        User $user
+    ) {
         $validated = $request->validate([
 
             'name' => [
@@ -280,9 +272,9 @@ class UserController extends Controller
                 'exists:branches,id',
             ],
 
-            'role' => [
+            'role_id' => [
                 'required',
-                'exists:roles,name',
+                'exists:roles,id',
             ],
 
         ]);
@@ -299,8 +291,14 @@ class UserController extends Controller
             !empty($validated['company_id'])
         ) {
 
-            $branchBelongsToCompany = Branch::where('id', $validated['branch_id'])
-                ->where('company_id', $validated['company_id'])
+            $branchBelongsToCompany = Branch::where(
+                'id',
+                $validated['branch_id']
+            )
+                ->where(
+                    'company_id',
+                    $validated['company_id']
+                )
                 ->exists();
 
             if (!$branchBelongsToCompany) {
@@ -336,17 +334,6 @@ class UserController extends Controller
 
         /*
         |--------------------------------------------------------------------------
-        | Store Role Separately
-        |--------------------------------------------------------------------------
-        */
-
-        $role = $validated['role'];
-
-        unset($validated['role']);
-
-
-        /*
-        |--------------------------------------------------------------------------
         | Update User
         |--------------------------------------------------------------------------
         */
@@ -354,21 +341,12 @@ class UserController extends Controller
         $user->update($validated);
 
 
-        /*
-        |--------------------------------------------------------------------------
-        | Sync Role
-        |--------------------------------------------------------------------------
-        |
-        | Old role will be removed and selected role will be assigned.
-        |
-        */
-
-        $user->syncRoles([$role]);
-
-
         return redirect()
             ->route('admin.users.index')
-            ->with('success', 'User updated successfully.');
+            ->with(
+                'success',
+                'User updated successfully.'
+            );
     }
 
 
@@ -381,9 +359,21 @@ class UserController extends Controller
     public function destroy(User $user)
     {
         if (auth()->id() === $user->id) {
-            return back()->with('error', 'You cannot delete your own account.');
+
+            return back()
+                ->with(
+                    'error',
+                    'You cannot delete your own account.'
+                );
         }
+
         $user->delete();
-        return redirect()->route('admin.users.index')->with('success', 'User deleted successfully.');
+
+        return redirect()
+            ->route('admin.users.index')
+            ->with(
+                'success',
+                'User deleted successfully.'
+            );
     }
 }
