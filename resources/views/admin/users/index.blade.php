@@ -2,7 +2,7 @@
 
 @section('content')
 
-<div class="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+<div class="max-w-screen-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
 
     {{-- Header --}}
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">

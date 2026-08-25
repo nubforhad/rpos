@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CompanyController; 
 use App\Http\Controllers\BranchController; 
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\RoleController;
 
 
 Route::get('/', function () {
@@ -17,5 +18,6 @@ Route::get('/', function () {
         Route::resource('companies', CompanyController::class);
         Route::resource('branches', BranchController::class);
         Route::resource('users', UserController::class);
+        Route::resource('roles', RoleController::class);
 
     });

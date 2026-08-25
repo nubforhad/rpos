@@ -41,20 +41,17 @@
 
     <body class="bg-gray-100 text-gray-800 antialiased">
         <div class="min-h-screen">
-            {{-- ========================================================= MOBILE OVERLAY
-            ========================================================== --}}
+            {{-- ===== == MOBILE OVERLAY == --}}
 
             <div id="sidebar-overlay" class="fixed inset-0 z-40 bg-black/50 hidden lg:hidden"></div>
 
-            {{-- ========================================================= SIDEBAR
-            ========================================================== --}}
+            {{-- === === SIDEBAR ===== --}}
 
             <aside
                 id="sidebar"
                 class="fixed top-0 left-0 z-50 w-64 h-screen bg-slate-900 text-white transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out flex flex-col"
             >
-                {{-- ===================================================== LOGO
-                ====================================================== --}}
+                {{-- =====  LOGO ===== --}}
 
                 <div class="h-16 flex items-center justify-between px-5 border-b border-slate-700 shrink-0">
                     <a href="{{ url('/admin/dashboard') }}" class="flex items-center gap-3">
@@ -82,8 +79,7 @@
                     </button>
                 </div>
 
-                {{-- ===================================================== USER MINI PROFILE
-                ====================================================== --}} @auth
+                {{-- ===== = USER MINI PROFILE ==== --}} @auth
 
                 <div class="px-4 py-4 border-b border-slate-700">
                     <div class="flex items-center gap-3">
@@ -103,8 +99,7 @@
                     </div>
                 </div>
 
-                @endauth {{-- ===================================================== NAVIGATION
-                ====================================================== --}}
+                @endauth {{-- == = NAVIGATION == --}}
 
                 <nav class="flex-1 overflow-y-auto px-3 py-4 space-y-1">
                     {{-- Dashboard --}}
@@ -161,7 +156,7 @@
                     {{-- Roles --}}
 
                     <a
-                        href="#"
+                        href="{{ route('admin.roles.index') }}"
                         class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-300 hover:bg-slate-800 hover:text-white transition"
                     >
                         <span class="w-5 text-center"> 🔐 </span>
